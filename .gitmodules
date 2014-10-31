@@ -1,0 +1,7 @@
+[submodule "zsh-syntax-highlighting"]
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+	path = plugins/zsh-syntax-highlighting
+[submodule "themes"]
+	url = https://gist.github.com/60f2cc521227e61f1be0.git
+	pushurl = git@gist.github.com:/60f2cc521227e61f1be0.git
+	path = themes
