@@ -1,4 +1,4 @@
-setopt completealiases
+#setopt completealiases
 
 if [ "$TERM" = fbterm -o "$TERM" = linux ]; then
 	eval "$(TERM=linux dircolors -b)"
