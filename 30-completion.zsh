@@ -1,12 +1,7 @@
 #setopt completealiases
 
-if [ "$TERM" = fbterm -o "$TERM" = linux ]; then
-	eval "$(TERM=linux dircolors -b)"
-#elif [ "$terminfo[colors]" -lt 256 ]; then
-#	eval "$(dircolors -b)"
-else
-	[ -r ~/.dircolors ] && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-fi
+# make case-insensitivity non-retarded
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # from debian newuser.zshrc.recommended
 zstyle ':completion:*' auto-description 'specify: %d'
