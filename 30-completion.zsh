@@ -1,5 +1,9 @@
 #setopt completealiases
 
+# make autocd non-retarded
+# cdablevars + autocd => user -> cd ~user - insanity for tab complete
+unsetopt cdablevars
+
 # make case-insensitivity non-retarded
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
