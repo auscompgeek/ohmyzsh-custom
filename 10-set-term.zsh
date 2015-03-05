@@ -20,7 +20,7 @@ if [ "$TERM" = "xterm" ]; then
 			TERM=gnome-256color
 			;;
 
-		# vte2 (GTK+ 2.0) - I give up.
+		# vte2 (GTK+ 2.0) -- I give up.
 		xfce4-terminal)
 			TERM=xterm-256color
 			;;
@@ -54,22 +54,22 @@ if [ -z "$terminfo[colors]" ]; then
 			TERM=xterm-256color
 			;;
 	esac
-fi
-if [ -z "$terminfo[colors]" ]; then
-	case "$TERM" in
-		gnome*|xterm*|konsole*|aterm|[Ee]term|vte*)
-			echo "Unknown terminal $TERM. Falling back to 'xterm'." >&2
-			TERM=xterm
-			;;
-		rxvt*)
-			echo "Unknown terminal $TERM. Falling back to 'rxvt'." >&2
-			TERM=rxvt
-			;;
-		screen*)
-			echo "Unknown terminal $TERM. Falling back to 'screen'." >&2
-			TERM=screen
-			;;
-	esac
+	if [ -z "$terminfo[colors]" ]; then
+		case "$TERM" in
+			gnome*|xterm*|konsole*|aterm|[Ee]term|vte*)
+				echo "Unknown terminal $TERM. Falling back to 'xterm'." >&2
+				TERM=xterm
+				;;
+			rxvt*)
+				echo "Unknown terminal $TERM. Falling back to 'rxvt'." >&2
+				TERM=rxvt
+				;;
+			screen*)
+				echo "Unknown terminal $TERM. Falling back to 'screen'." >&2
+				TERM=screen
+				;;
+		esac
+	fi
 fi
 
 export TERM  # just in case
