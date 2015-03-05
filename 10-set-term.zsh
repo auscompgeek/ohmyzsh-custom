@@ -49,7 +49,7 @@ if [ -z "$terminfo[colors]" ]; then
 			echo "Unknown terminal $TERM. Falling back to 'xterm-88color'." >&2
 			TERM=xterm-88color
 			;;
-		*-256color)
+		*-256color|xterm-termite)
 			echo "Unknown terminal $TERM. Falling back to 'xterm-256color'." >&2
 			TERM=xterm-256color
 			;;
