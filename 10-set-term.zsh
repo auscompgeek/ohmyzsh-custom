@@ -3,30 +3,21 @@
 
 # Handle pesky terminals that call themselves xterm. (I'm looking at you, libvte.)
 if [ "$TERM" = "xterm" ]; then
-	case "$COLORTERM" in
-		"")
-			case "$XTERM_VERSION" in
-				# My xterm reports itself as XTerm(297). Who knows.
-				"XTerm(256)"|"XTerm(297)") TERM=xterm-256color ;;
-				"XTerm(88)") TERM=xterm-88color ;;
-				"XTerm") ;;
-				"") echo "Warning: Terminal wrongly calling itself 'xterm'." >&2 ;;
-				*) echo "Warning: Unrecognized XTERM_VERSION: $XTERM_VERSION" >&2 ;;
-			esac
-			;;
-
-		# vte3 (GTK+ 3.0)
-		gnome-terminal)
-			TERM=gnome-256color
-			;;
-
-		# vte2 (GTK+ 2.0) -- I give up.
-		xfce4-terminal)
-			TERM=xterm-256color
-			;;
-
-		*) echo "Warning: Unrecognized COLORTERM: $COLORTERM" >&2 ;;
-	esac
+	if [ -n "$VTE_VERSION" ]; then
+		TERM=vte-256color
+	elif [ -n "$COLORTERM" ]; then
+		# eh.
+		TERM=xterm-256color
+	else
+		case "$XTERM_VERSION" in
+			# My xterm reports itself as XTerm(297). Who knows.
+			"XTerm(256)"|"XTerm(297)") TERM=xterm-256color ;;
+			"XTerm(88)") TERM=xterm-88color ;;
+			"XTerm") ;;
+			"") echo "Warning: Terminal wrongly calling itself 'xterm'." >&2 ;;
+			*) echo "Warning: Unrecognized XTERM_VERSION: $XTERM_VERSION" >&2 ;;
+		esac
+	fi
 fi
 
 # Make sure we've set a TERM that exists in our termcap/terminfo.
