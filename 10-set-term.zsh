@@ -1,7 +1,7 @@
 # Double-check the damn TERM.
 # Appropriated from http://vim.wikia.com/wiki/256_colors_in_vim.
 
-# Handle pesky terminals that call themselves xterm. (I'm looking at you, libvte.)
+# Handle pesky terminals that call themselves xterm. (I'm looking at you, vte2.)
 if [ "$TERM" = "xterm" ]; then
 	if [ -n "$VTE_VERSION" ]; then
 		TERM=vte-256color
@@ -10,57 +10,45 @@ if [ "$TERM" = "xterm" ]; then
 		TERM=xterm-256color
 	else
 		case "$XTERM_VERSION" in
-			# My xterm reports itself as XTerm(297). Who knows.
-			"XTerm(256)"|"XTerm(297)") TERM=xterm-256color ;;
+			# Screw it. I don't give a damn any more.
+			XTerm\(???*\)) TERM=xterm-256color ;;
 			"XTerm(88)") TERM=xterm-88color ;;
-			"XTerm") ;;
-			"") echo "Warning: Terminal wrongly calling itself 'xterm'." >&2 ;;
+			XTerm) ;;
+			"") echo "Warning: Terminal wrongly calling itself xterm." >&2 ;;
 			*) echo "Warning: Unrecognized XTERM_VERSION: $XTERM_VERSION" >&2 ;;
 		esac
 	fi
 fi
 
-# Make sure we've set a TERM that exists in our termcap/terminfo.
+__set_term() {
+	echo "Unusable TERM $TERM; falling back to $1." >&2
+	TERM="$1"
+}
+
+# Make sure we have a TERM that has colours.
+# If it doesn't have colours, it probably isn't in our termcap/terminfo.
 if [ -z "$terminfo[colors]" ]; then
 	case "$TERM" in
-		screen-*color-bce)
-			echo "Unknown terminal $TERM. Falling back to 'screen-bce'." >&2
-			TERM=screen-bce
-			;;
-		screen*) ;;  # Don't touch screen-*color here, let it fall back to 'screen' like it should.
-		*-color)
-			echo "Unknown terminal $TERM. Falling back to 'xterm-color'." >&2
-			TERM=xterm-color
-			;;
-		*-16color)
-			echo "Unknown terminal $TERM. Falling back to 'xterm-16color'." >&2
-			TERM=xterm-16color
-			;;
-		*-88color)
-			echo "Unknown terminal $TERM. Falling back to 'xterm-88color'." >&2
-			TERM=xterm-88color
-			;;
-		*-256color|xterm-termite)
-			echo "Unknown terminal $TERM. Falling back to 'xterm-256color'." >&2
-			TERM=xterm-256color
-			;;
+		screen-*color-bce) __set_term screen-bce ;;
+		tmux-256color) __set_term screen-256color ;;
+		screen*|tmux*) ;;  # Don't touch screen/tmux-*color here, let it fall back to screen.
+
+		rxvt-unicode*) __set_term "${TERM/-unicode/}" ;;
+
+		# Only xterm-alikes should get here.
+		*-color) __set_term xterm-color ;;
+		*-16color) __set_term xterm-16color ;;
+		*-88color) __set_term xterm-88color ;;
+		*-256color|xterm-termite) __set_term xterm-256color ;;
 	esac
 	if [ -z "$terminfo[colors]" ]; then
 		case "$TERM" in
-			gnome*|xterm*|konsole*|aterm|[Ee]term|vte*)
-				echo "Unknown terminal $TERM. Falling back to 'xterm'." >&2
-				TERM=xterm
-				;;
-			rxvt*)
-				echo "Unknown terminal $TERM. Falling back to 'rxvt'." >&2
-				TERM=rxvt
-				;;
-			screen*)
-				echo "Unknown terminal $TERM. Falling back to 'screen'." >&2
-				TERM=screen
-				;;
+			gnome*|xterm*|konsole*|aterm|[Ee]term|vte*) __set_term xterm ;;
+			rxvt*) __set_term rxvt ;;
+			screen*|tmux*) __set_term screen ;;
 		esac
 	fi
 fi
 
+unfunction __set_term
 export TERM  # just in case
